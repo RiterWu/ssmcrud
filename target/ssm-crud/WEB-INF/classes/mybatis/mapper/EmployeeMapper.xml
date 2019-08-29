@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xwh.dao.EmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.xwh.entity.Employee">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="emp_name" jdbcType="VARCHAR" property="empName" />
+    <result column="gender" jdbcType="CHAR" property="gender" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="dept_id" jdbcType="INTEGER" property="deptId" />
+  </resultMap>
+  <resultMap id="WithDept" type="com.xwh.entity.Employee" extends="BaseResultMap">
+    <association  property="department" javaType="com.xwh.entity.Department">
+      <id column="id" property="id"/>
+      <result column="dept_name" property="deptName"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, emp_name, gender, email, dept_id
+  </sql>
+  <sql id="WithDept_Column_List">
+    e.id,e.emp_name,e.gender,e.email,d.dept_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from employee
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getAll" resultMap="WithDept">
+      SELECT
+      <include refid="WithDept_Column_List"/>
+      FROM employee e LEFT JOIN department d ON e.dept_id = d.id
+  </select>
+  <select id="checkuser" resultType="java.lang.Boolean">
+     select count(*) from employee where emp_name = #{empName}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from employee
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteBath">
+      delete from employee
+      where id in
+      <foreach collection="list" item="empId" open="(" close=")" separator=",">
+          #{empId}
+      </foreach>
+    </delete>
+    <insert id="insert" parameterType="com.xwh.entity.Employee">
+    insert into employee (id, emp_name, gender, 
+      email, dept_id)
+    values (#{id,jdbcType=INTEGER}, #{empName,jdbcType=VARCHAR}, #{gender,jdbcType=CHAR}, 
+      #{email,jdbcType=VARCHAR}, #{deptId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xwh.entity.Employee">
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="empName != null">
+        emp_name,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="deptId != null">
+        dept_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="empName != null">
+        #{empName,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=CHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        #{deptId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xwh.entity.Employee">
+    update employee
+    <set>
+      <if test="empName != null">
+        emp_name = #{empName,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=CHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="deptId != null">
+        dept_id = #{deptId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xwh.entity.Employee">
+    update employee
+    set emp_name = #{empName,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=CHAR},
+      email = #{email,jdbcType=VARCHAR},
+      dept_id = #{deptId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
