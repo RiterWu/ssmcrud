@@ -73,12 +73,12 @@ if (list instanceof Collection) {
       Map<String,Object> map = new HashMap<>();       
       List<FieldError> errors = result.getFieldErrors();     
       for(FieldError e:errors){           
-          System.out.println("错误的字段名:"+e.getField());           		 	               System.out.println("错误的信息:"+e.getDefaultMessage());                             map.put(e.getField(),e.getDefaultMessage());        
+          System.out.println("错误的字段名:"+e.getField());           		 	             
+	  System.out.println("错误的信息:"+e.getDefaultMessage());  
+	  map.put(e.getField(),e.getDefaultMessage());        
       }        
       return ResultData.fail().add("errorFields",map);    
   }
   ```
 
 ## 三、总结
-
-
